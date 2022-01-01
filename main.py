@@ -42,7 +42,9 @@ def finish():
     size = int(entry_number_of_tasks.get())
     size *=1000
     img = Image.new('RGBA', (1000, size), 'white')
+    imgansw = Image.new('RGBA', (1500, 1000), 'white')
     draw = ImageDraw.Draw(img)
+    drawansw = ImageDraw.Draw(imgansw)
     font = ImageFont.truetype('arial.ttf', size=50)
     number_of_acceptable_commands = list()
     acceptable_commands = list()
@@ -50,6 +52,20 @@ def finish():
     max_commands = int(entry_max_commands.get())
     min_commands = int(entry_min_commands.get())
     number_of_tasks = int(entry_number_of_tasks.get())
+    answer_str = str()
+    for i in range (40):
+        draw.line(
+                 (i*scale, 0, i*scale, 1000*number_of_tasks),
+                 fill='gray',
+                 width=1
+                 )
+    for i in range (40*number_of_tasks):
+        draw.line(
+                 (0, i*scale, 1000, i*scale),
+                 fill='gray',
+                 width=1
+                 )
+
     for i in range(max_commands - min_commands):
         command = i + min_commands
         number_of_acceptable_commands.append(command)
@@ -59,16 +75,25 @@ def finish():
         currentX = int(500)
         currentY = int(500+i*1000)
         answer.clear()
-        text_koords = int((i - 1) * 1000 + 100)
+        text_koords = int(500+i*50)
         stri = str(i)
-        usertext = str('Задача ')
-        usertext = usertext+stri
-        draw.text((400, text_koords), usertext, font=font)
         number_commands = int(random.choice(number_of_acceptable_commands))
+        draw.rectangle((currentX-5, currentY-5, currentX+5, currentY+5), fill='black')
 
         for j in range(number_commands):
             random_command = int(random.choice(acceptable_commands))
             answer.append(random_command)
+
+            if random_command % 5 == 0:
+                answer_str += 'A '
+            elif random_command%5 == 1:
+                answer_str += 'B '
+            elif random_command%5 == 2:
+                answer_str += 'C '
+            elif random_command%5 == 3:
+                answer_str += 'D '
+            elif random_command%5 == 4:
+                answer_str += 'E '
 
             for n in range(len(all_Commands[random_command])):
 
@@ -81,11 +106,37 @@ def finish():
                 draw.line(
                           (currentX_koords, currentY_koords, nextX_koords, nextY_koords),
                           fill='black',
-                          width=3
+                          width=5   
                           )
+        drawansw.text((100, text_koords), answer_str, font=font, fill='black')
+        answer_str = ''
 
-        print(answer)
 
+    for i in range(5):
+
+        text_koords = 250+ i*300
+        answer_str = ''
+        answer_str += chr(65 + i)
+        drawansw.text((text_koords, 25), answer_str, font=font, fill='black')
+
+
+
+        currentX = 250+ i*300
+        currentY = 100
+        for n in range(len(all_Commands[i])):
+            currentX_koords = int(currentX)
+            currentY_koords = int(currentY)
+            nextX_koords = int(currentX_koords + 75 * all_Commands[i][n][0])
+            nextY_koords = int(currentY_koords - 75 * all_Commands[i][n][1])
+            currentX = nextX_koords
+            currentY = nextY_koords
+            drawansw.line(
+                 (currentX_koords, currentY_koords, nextX_koords, nextY_koords),
+                fill='black',
+                width=5
+            )
+
+    imgansw.save('ANSWER.png')
     img.save('TASK.png')
 
     root.destroy()
