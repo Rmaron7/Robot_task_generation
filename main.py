@@ -53,6 +53,9 @@ def finish():
         global diff
         min_diff = int(entry_min_diff.get())
         max_diff = int(entry_max_diff.get())
+        if min_diff > max_diff:
+            min_diff = int(entry_max_diff.get())
+            max_diff = int(entry_min_diff.get())
         if min_diff < 1:
             min_diff = 1
         if max_diff > 10:
@@ -73,6 +76,9 @@ def finish():
         command = int()
         max_commands = int(entry_max_commands.get())
         min_commands = int(entry_min_commands.get())
+        if min_commands > max_commands:
+            max_commands = int(entry_min_commands.get())
+            min_commands = int(entry_max_commands.get())
         if min_commands < 1:
             min_commands = 1
         if max_commands > 20:
