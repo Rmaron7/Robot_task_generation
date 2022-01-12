@@ -1,25 +1,27 @@
 import random
 import tkinter as tk
 from PIL import Image, ImageDraw, ImageFont
-
+# ----------------------------------------------------------------------------------------------------------------------
+# объявление основных данных
+# ----------------------------------------------------------------------------------------------------------------------
 root = tk.Tk()
-root[ 'bg' ] = '#ffffff'
+root['bg'] = '#ffffff'
 root.geometry('1500x800')
 root.title('генератор задач типа робот')
 answer = []
 answer_draw = []
 
 all_Commands = [
-                [ [ 0, -3 ], [ -2, 0 ] ],
-                [ [ 0, -3 ], [ 2, 0 ] ],
-                [ [ 0, -3 ], [ 2, 0 ], [ 0, 1 ] ],
-                [ [ -1, 0 ], [ 0, -3 ], [ 2, 0 ] ],
-                [ [ 0, -2 ], [ -2, 0 ], [ 0, 2 ] ]
-              ]
+    [[0, -3], [-2, 0]],
+    [[0, -3], [2, 0]],
+    [[0, -3], [2, 0], [0, 1]],
+    [[-1, 0], [0, -3], [2, 0]],
+    [[0, -2], [-2, 0], [0, 2]]
+]
 
 new_Command = []
 
-all_Commands_Len = len(all_Commands) # запоминаем длину первоначального списка
+all_Commands_Len = len(all_Commands)
 
 for i in range(3):
     for j in range(all_Commands_Len):
@@ -37,7 +39,11 @@ for i in range(3):
 
         all_Commands.append(new_Command.copy())
 
+
 def finish():
+    # ------------------------------------------------------------------------------------------------------------------
+    # подготовка всего для работы процедуры
+    # ------------------------------------------------------------------------------------------------------------------
     global answer
     global right
     global left
@@ -48,7 +54,7 @@ def finish():
     max_diff = int(entry_max_diff.get())
     if min_diff < 1:
         min_diff = 1
-    if max_diff >10:
+    if max_diff > 10:
         max_diff = 10
     diff = int()
     scale = int(25)
@@ -57,7 +63,7 @@ def finish():
     size_ans = int(entry_number_of_tasks.get())
     size_ans *= 75
     img = Image.new('RGBA', (1000, size), 'white')
-    imgansw = Image.new('RGBA', (1500, 1000+size_ans), 'white')
+    imgansw = Image.new('RGBA', (1500, 1000 + size_ans), 'white')
     draw = ImageDraw.Draw(img)
     drawansw = ImageDraw.Draw(imgansw)
     font = ImageFont.truetype('arial.ttf', size=50)
@@ -72,24 +78,29 @@ def finish():
         max_commands = 20
     number_of_tasks = int(entry_number_of_tasks.get())
     answer_str = str()
-    for i in range (40):
+    for i in range(40): #
         draw.line(
-                 (i*scale, 0, i*scale, 1000*number_of_tasks),
-                 fill='gray',
-                 width=1
-                 )
-    for i in range (40*number_of_tasks):
+            (i * scale, 0, i * scale, 1000 * number_of_tasks),
+            fill='gray',
+            width=1
+        )
+    for i in range(40 * number_of_tasks):
         draw.line(
-                 (0, i*scale, 1000, i*scale),
-                 fill='gray',
-                 width=1
-                 )
+            (0, i * scale, 1000, i * scale),
+            fill='gray',
+            width=1
+        )
 
     for i in range(max_commands - min_commands):
         command = i + min_commands
         number_of_acceptable_commands.append(command)
     for i in range(len(all_Commands)):
         acceptable_commands.append(i)
+
+        # --------------------------------------------------------------------------------------------------------------
+        # генерация всех задач, проверка на подходимость
+        # --------------------------------------------------------------------------------------------------------------
+
     i = 0
     for i in range(number_of_tasks):
         upper = int()
@@ -98,7 +109,7 @@ def finish():
         right = int()
         square = int()
 
-        while not diff < max_diff or not diff > min_diff:
+        while not diff <= max_diff or not diff >= min_diff:
             diff = 0
             square = 0
             upper = 0
@@ -110,10 +121,10 @@ def finish():
             answer_str = ''
 
             currentX = int(500)
-            currentY = int(500+i*1000)
-            text_koords = int(500+i*50)
+            currentY = int(500 + i * 1000)
+            text_koords = int(500 + i * 50)
             number_commands = int(random.choice(number_of_acceptable_commands))
-            draw.rectangle((currentX-5, currentY-5, currentX+5, currentY+5), fill='black')
+            draw.rectangle((currentX - 5, currentY - 5, currentX + 5, currentY + 5), fill='black')
 
             for j in range(number_commands):
                 random_command = int(random.choice(acceptable_commands))
@@ -121,13 +132,13 @@ def finish():
 
                 if random_command % 5 == 0:
                     answer_str += 'A '
-                elif random_command%5 == 1:
+                elif random_command % 5 == 1:
                     answer_str += 'B '
-                elif random_command%5 == 2:
+                elif random_command % 5 == 2:
                     answer_str += 'C '
-                elif random_command%5 == 3:
+                elif random_command % 5 == 3:
                     answer_str += 'D '
-                elif random_command%5 == 4:
+                elif random_command % 5 == 4:
                     answer_str += 'E '
 
                 for n in range(len(all_Commands[random_command])):
@@ -143,13 +154,15 @@ def finish():
                     elif interm_coords[1] < upper:
                         upper = interm_coords[1]
 
-
             square = (right - left) * (lower - upper)
-            print(square)
-            diff = int(number_commands*50/square)
+            diff = int(number_commands * 50 / square)
 
             answer_draw = answer[:]
         diff = 0
+
+        # --------------------------------------------------------------------------------------------------------------
+        # отрисовка задач после удачной генерации
+        # --------------------------------------------------------------------------------------------------------------
 
         for j in range(number_commands):
             for n in range(len(all_Commands[answer_draw[j]])):
@@ -166,6 +179,10 @@ def finish():
                 )
             drawansw.text((100, text_koords), answer_str, font=font, fill='black')
         answer.clear()
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # отрисовка команд на поле с ответами
+    # ------------------------------------------------------------------------------------------------------------------
 
     for i in range(5):
 
@@ -188,18 +205,18 @@ def finish():
                 fill='black',
                 width=5
             )
-
+    # ------------------------------------------------------------------------------------------------------------------
+    #   отрисовка команд на поле с условиями
+    # ------------------------------------------------------------------------------------------------------------------
 
     for i in range(5):
 
-        text_koords = 225+ i*175
+        text_koords = 225 + i * 175
         answer_str = ''
         answer_str += chr(65 + i)
         draw.text((text_koords, 25), answer_str, font=font, fill='black')
 
-
-
-        currentX = 225+ i*175
+        currentX = 225 + i * 175
         currentY = 80
         for n in range(len(all_Commands[i])):
             currentX_koords = int(currentX)
@@ -209,7 +226,7 @@ def finish():
             currentX = nextX_koords
             currentY = nextY_koords
             draw.line(
-                 (currentX_koords, currentY_koords, nextX_koords, nextY_koords),
+                (currentX_koords, currentY_koords, nextX_koords, nextY_koords),
                 fill='black',
                 width=5
             )
@@ -219,6 +236,9 @@ def finish():
 
     root.destroy()
 
+# ----------------------------------------------------------------------------------------------------------------------
+# объявление всех полей ввода и кнопок
+# ----------------------------------------------------------------------------------------------------------------------
 
 label_1 = tk.Label(root,
                    text='Минимум команд',
@@ -237,8 +257,6 @@ label_2 = tk.Label(root,
                    ).grid(row=1, column=0)
 entry_max_commands = tk.Entry(root)
 entry_max_commands.grid(row=1, column=1)
-
-
 
 label_3 = tk.Label(root,
                    text='Количество задач',
